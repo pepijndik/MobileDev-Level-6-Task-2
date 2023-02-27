@@ -3,6 +3,7 @@ package nl.pdik.level6.task2.ui.screens.overviewScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -37,7 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import nl.pdik.level6.task2.R
@@ -135,16 +139,30 @@ fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (M
 
 @Composable
 fun MoviePoster(url:String, name:String, modifier: Modifier) {
-    AsyncImage(
-        contentScale = FillBounds,
-        modifier = modifier,
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .crossfade(true)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .build(),
-        contentDescription = name
+    val painter = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(data = url)
+            .apply<ImageRequest.Builder>(block = fun ImageRequest.Builder.() {
+                crossfade(true)
+                memoryCachePolicy(CachePolicy.ENABLED)
+            }).build()
     )
+    Image(
+        contentScale = FillBounds,
+        painter = painter,
+        modifier = modifier,
+        contentDescription = null
+    )
+
+//    AsyncImage(
+//        contentScale = FillBounds,
+//        modifier = modifier,
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data(url)
+//            .crossfade(true)
+//            .memoryCachePolicy(CachePolicy.ENABLED)
+//            .build(),
+//        contentDescription = name
+//    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
