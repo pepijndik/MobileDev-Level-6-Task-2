@@ -42,7 +42,7 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
             _moviesResource.value = movieRepository.getMovies()
         }
     }
-    fun getMovie(id: String) {
+    fun getMovie(id: Int) {
         //set resource type to loading
         _movieResource.value = Resource.Loading()
         viewModelScope.launch {

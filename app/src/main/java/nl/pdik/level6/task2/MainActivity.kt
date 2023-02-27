@@ -10,12 +10,15 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import nl.pdik.level6.task2.ui.screens.MovieScreens
+import nl.pdik.level6.task2.ui.screens.overviewScreen.OverviewScreen
 import nl.pdik.level6.task2.ui.theme.Task2Theme
+import nl.pdik.level6.task2.viewModel.MoviesViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Task2Theme {
                 // A surface container using the 'background' color from the theme
-               Level6Task2App()
+                Level6Task2App()
             }
         }
     }
@@ -32,13 +35,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Level6Task2App() {
     val navController = rememberNavController()
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.app_name)) }
-            )
-        },
     ) { innerPadding ->
         NavHost(navController, innerPadding)
     }
@@ -51,12 +48,13 @@ private fun NavHost(
     navController: NavHostController,
     innerPadding: PaddingValues
 ) {
+    val viewModel: MoviesViewModel = viewModel();
     NavHost(
         navController,
         startDestination = MovieScreens.OverviewScreen.route,
         Modifier.padding(innerPadding)
     ) {
-        composable(MovieScreens.OverviewScreen.route) {  }
-        composable(MovieScreens.DetialScreen.route) {  }
+        composable(MovieScreens.OverviewScreen.route) { OverviewScreen(viewModel) }
+        composable(MovieScreens.DetialScreen.route) { }
     }
 }

@@ -1,8 +1,7 @@
 package nl.pdik.level6.task2.ui.screens.overviewScreen
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -10,10 +9,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -21,8 +22,32 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.pdik.level6.task2.R
+import nl.pdik.level6.task2.ui.screens.MovieScreens
 import nl.pdik.level6.task2.viewModel.MoviesViewModel
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun OverviewScreen(viewModel: MoviesViewModel){
+    val context = LocalContext.current
+    Scaffold(
+        topBar = {
+            TopAppBar(
+            ){
+                SearchView(viewModel)
+            }
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+
+        }
+    }
+
+}
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchView(viewModel: MoviesViewModel) {
