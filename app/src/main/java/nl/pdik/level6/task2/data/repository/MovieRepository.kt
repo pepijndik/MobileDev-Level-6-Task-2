@@ -31,7 +31,7 @@ class MovieRepository {
 
         val response = try {
             withTimeout(5_000) {
-                apiService.getMovies(id)
+                apiService.getMovies(movieId=id)
             }
         } catch (e: Exception) {
             Log.e("MovieRepository", e.message ?: "No exception message available")

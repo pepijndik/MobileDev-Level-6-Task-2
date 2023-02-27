@@ -2,4 +2,7 @@
     <string name="app_name">Movie </string>
     <string name="search_movie_hint">Search for a movie by name</string>
     <string name="overview">Overview</string>
+    <string name="error">An unknown error</string>
+    <string name="empty">Search query can\'t be empty</string>
+    <string name="search">Search for movies</string>
 </resources>

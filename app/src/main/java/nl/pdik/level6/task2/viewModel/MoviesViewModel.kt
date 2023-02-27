@@ -13,6 +13,9 @@ import nl.pdik.level6.task2.data.repository.MovieRepository
 class MoviesViewModel(application: Application) : AndroidViewModel(application) {
     private val movieRepository = MovieRepository()
 
+    var selectedMovie: Movie? = null
+        private set
+
     /**
      * Expose non MutableLiveData via getter
      * errorText can be observed from Activity for error showing
