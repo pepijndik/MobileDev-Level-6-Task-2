@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import nl.pdik.level6.task2.R
 import nl.pdik.level6.task2.data.api.util.Resource
@@ -51,7 +52,12 @@ import nl.pdik.level6.task2.viewModel.MoviesViewModel
 fun OverviewScreen(viewModel: MoviesViewModel, navController: NavHostController) {
     val context = LocalContext.current
     val moviesResource: Resource<List<Movie>?>? by viewModel.moviesResource.observeAsState()
-    val onMovieClicked: (Int) -> Unit = { movieId -> navController.navigate(MovieScreens.DetialScreen.route) }
+    val onMovieClicked: (Movie) -> Unit = { movie ->
+        run {
+            viewModel.selectedMovie = movie
+            navController.navigate(MovieScreens.DetialScreen.route)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -82,9 +88,10 @@ fun OverviewScreen(viewModel: MoviesViewModel, navController: NavHostController)
                         //TODO: show items for movies
                         val movies = (moviesResource as Resource.Success<List<Movie>?>).data;
                         items(items = movies!!, itemContent = { movie: Movie ->
-                            MovieContent(movie,Modifier
+                            MovieContent(movie, Modifier
                                 .height(320.dp)
-                                .padding(vertical = 8.dp, horizontal = 2.dp))
+                                .padding(vertical = 8.dp, horizontal = 2.dp),
+                                onMovieClicked)
                         })
                     }
                 }
@@ -110,7 +117,7 @@ fun OverviewScreen(viewModel: MoviesViewModel, navController: NavHostController)
 }
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (Int) -> Unit = {}) {
+fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (Movie) -> Unit = {}) {
     Box(modifier = modifier) {
         Card(
             modifier = Modifier
@@ -118,24 +125,23 @@ fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (I
                 .offset(y = 12.dp),
             shape = RoundedCornerShape(size = 8.dp),
             elevation = 8.dp,
-            onClick = { onMovieClicked(movie.id) }
+            onClick = { onMovieClicked(movie) }
         ) {
             val path = "https://image.tmdb.org/t/p/w780/"+movie.poster;
-            MoviePoster(path, movie.title)
+            MoviePoster(path, movie.title, Modifier.fillMaxSize())
         }
     }
 }
 
 @Composable
-fun MoviePoster(url:String, name:String) {
-    //val scale = if (painter.state !is AsyncImagePainter.State.Success) ContentScale.Fit else ContentScale.FillBounds
+fun MoviePoster(url:String, name:String, modifier: Modifier) {
     AsyncImage(
         contentScale = FillBounds,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
             .crossfade(true)
-            //.memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .build(),
         contentDescription = name
     )
@@ -160,6 +166,9 @@ fun SearchView(viewModel: MoviesViewModel) {
         leadingIcon = {
             IconButton(onClick = {
                 //TODO: Your logic here
+//                if(searchQueryState.value.text.isNotBlank()){
+//
+//                }
                 viewModel.getMovies(searchQueryState.value.text);
                 //based on @ExperimentalComposeUiApi - if this doesn't work in a newer version remove it
                 //no alternative in compose for hiding keyboard at time of writing

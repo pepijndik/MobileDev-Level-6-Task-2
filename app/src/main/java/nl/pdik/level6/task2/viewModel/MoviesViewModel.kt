@@ -14,7 +14,6 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
     private val movieRepository = MovieRepository()
 
     var selectedMovie: Movie? = null
-        private set
 
     /**
      * Expose non MutableLiveData via getter
@@ -39,11 +38,14 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
      * Extension method of lifecycle-viewmodel-ktx library
      */
     fun getMovies(query: String) {
-        //set resource type to loading
-        _movieResource.value = Resource.Loading()
-        viewModelScope.launch {
-            _moviesResource.value = movieRepository.getMovies(query=query)
+        if(query.isNotBlank()){
+            //set resource type to loading
+            _movieResource.value = Resource.Loading()
+            viewModelScope.launch {
+                _moviesResource.value = movieRepository.getMovies(query=query)
+            }
         }
+        _movieResource.value = Resource.Empty();
     }
     fun getMovie(id: Int) {
         //set resource type to loading

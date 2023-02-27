@@ -1,8 +1,10 @@
 package nl.pdik.level6.task2
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import nl.pdik.level6.task2.ui.screens.MovieScreens
+import nl.pdik.level6.task2.ui.screens.detialScreen.MovieDetailScreen
 import nl.pdik.level6.task2.ui.screens.overviewScreen.OverviewScreen
 import nl.pdik.level6.task2.ui.theme.Task2Theme
 import nl.pdik.level6.task2.viewModel.MoviesViewModel
@@ -43,6 +46,7 @@ fun Level6Task2App() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun NavHost(
     navController: NavHostController,
@@ -55,6 +59,6 @@ private fun NavHost(
         Modifier.padding(innerPadding)
     ) {
         composable(MovieScreens.OverviewScreen.route) { OverviewScreen(viewModel,navController) }
-        composable(MovieScreens.DetialScreen.route) { }
+        composable(MovieScreens.DetialScreen.route) { MovieDetailScreen(viewModel,navController) }
     }
 }
