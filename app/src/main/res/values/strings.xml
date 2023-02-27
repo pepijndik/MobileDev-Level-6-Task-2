@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">task2</string>
+    <string name="app_name">Movie </string>
+    <string name="search_movie_hint">Search for a movie by name</string>
+    <string name="overview">Overview</string>
 </resources>
