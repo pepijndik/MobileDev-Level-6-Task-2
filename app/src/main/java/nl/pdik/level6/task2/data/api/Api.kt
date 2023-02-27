@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 class Api {
     companion object {
-        const val BASE_URL = "https://api.themoviedb.org/3//"
+        private const val BASE_URL = "https://api.themoviedb.org"
 
         // the lazy keyword makes sure the createApi function is not called until these properties are accessed
         val Client by lazy { createApi(BASE_URL) }
@@ -27,16 +27,16 @@ class Api {
             }
 
             val client = OkHttpClient.Builder()
+                .addInterceptor(apiKeyInterceptor)
                 .addInterceptor(HttpLoggingInterceptor()
                     .setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addInterceptor(apiKeyInterceptor)
 //                .readTimeout(10, TimeUnit.SECONDS)
 //                .writeTimeout(10, TimeUnit.SECONDS)
                 .build()
 
             // Create the Retrofit instance
             return Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/")
+                .baseUrl(baseUrl)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

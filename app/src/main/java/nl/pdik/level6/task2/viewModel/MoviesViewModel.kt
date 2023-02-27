@@ -21,11 +21,11 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
      * errorText can be observed from Activity for error showing
      * Encapsulation :)
      */
-    val moviesResource: LiveData<Resource<List<Movie>>>
+    val moviesResource: LiveData<Resource<List<Movie>?>>
         get() = _moviesResource
 
     //initialize it with an Empty type of Resource
-    private val _moviesResource: MutableLiveData<Resource<List<Movie>>> = MutableLiveData(Resource.Empty())
+    private val _moviesResource: MutableLiveData<Resource<List<Movie>?>> = MutableLiveData(Resource.Empty())
 
 
     val movieResource: LiveData<Resource<Movie>>
@@ -38,11 +38,11 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
      * The viewModelScope is bound to Dispatchers.Main and will automatically be cancelled when the ViewModel is cleared.
      * Extension method of lifecycle-viewmodel-ktx library
      */
-    fun getMovies() {
+    fun getMovies(query: String) {
         //set resource type to loading
         _movieResource.value = Resource.Loading()
         viewModelScope.launch {
-            _moviesResource.value = movieRepository.getMovies()
+            _moviesResource.value = movieRepository.getMovies(query=query)
         }
     }
     fun getMovie(id: Int) {

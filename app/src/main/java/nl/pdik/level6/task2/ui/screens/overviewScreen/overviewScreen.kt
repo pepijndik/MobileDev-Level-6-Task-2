@@ -3,16 +3,19 @@ package nl.pdik.level6.task2.ui.screens.overviewScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale.Companion.FillBounds
+import androidx.compose.ui.layout.ContentScale.Companion.Fit
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -30,21 +35,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import nl.pdik.level6.task2.R
 import nl.pdik.level6.task2.data.api.util.Resource
 import nl.pdik.level6.task2.data.model.Movie
 import nl.pdik.level6.task2.ui.screens.MovieScreens
 import nl.pdik.level6.task2.viewModel.MoviesViewModel
-import kotlin.reflect.typeOf
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun OverviewScreen(viewModel: MoviesViewModel) {
+fun OverviewScreen(viewModel: MoviesViewModel, navController: NavHostController) {
     val context = LocalContext.current
-    viewModel.getMovies();
-
-    val moviesResource: Resource<List<Movie>>? by viewModel.moviesResource.observeAsState()
+    val moviesResource: Resource<List<Movie>?>? by viewModel.moviesResource.observeAsState()
+    val onMovieClicked: (Int) -> Unit = { movieId -> navController.navigate(MovieScreens.DetialScreen.route) }
 
     Scaffold(
         topBar = {
@@ -59,21 +66,31 @@ fun OverviewScreen(viewModel: MoviesViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally
         ) {
+
+
             when (moviesResource) {
                 is Resource.Success -> {
                     LazyVerticalGrid(
-                        columns = GridCells.Adaptive(128.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        columns = GridCells.Fixed(3),
+                        contentPadding = PaddingValues(
+                            start = 0.dp,
+                            end = 0.dp,
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(0.dp, CenterHorizontally),
                     ) {
                         //TODO: show items for movies
-                        val movies = (moviesResource as Resource.Success<List<Movie>>).data;
+                        val movies = (moviesResource as Resource.Success<List<Movie>?>).data;
                         items(items = movies!!, itemContent = { movie: Movie ->
-                            MovieCard(movie)
+                            MovieContent(movie,Modifier
+                                .height(320.dp)
+                                .padding(vertical = 8.dp, horizontal = 2.dp))
                         })
                     }
                 }
                 is Resource.Error -> {
                     //TODO: show text for error state, use the .message of the resource
-                    if ((moviesResource as Resource.Error<List<Movie>>).message != null) {
+                    if ((moviesResource as Resource.Error<List<Movie>?>).message != null) {
                         Text(text = moviesResource?.message!!)
                     }
                 }
@@ -83,7 +100,7 @@ fun OverviewScreen(viewModel: MoviesViewModel) {
                 }
                 else -> {
                     //TODO: Show state?
-                     Text(text = moviesResource!!::class.java.typeName)
+                     Text(text = moviesResource!!::class.java.simpleName)
                 }
             }
         }
@@ -91,12 +108,37 @@ fun OverviewScreen(viewModel: MoviesViewModel) {
     }
 
 }
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (Int) -> Unit = {}) {
+    Box(modifier = modifier) {
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = 12.dp),
+            shape = RoundedCornerShape(size = 8.dp),
+            elevation = 8.dp,
+            onClick = { onMovieClicked(movie.id) }
+        ) {
+            val path = "https://image.tmdb.org/t/p/original/"+movie.backdrop;
+            MoviePoster(path, movie.title)
+        }
+    }
+}
 
 @Composable
-fun MovieCard(movie: Movie) {
-    Card() {
-
-    }
+fun MoviePoster(url:String, name:String) {
+    //val scale = if (painter.state !is AsyncImagePainter.State.Success) ContentScale.Fit else ContentScale.FillBounds
+    AsyncImage(
+        contentScale = FillBounds,
+        modifier = Modifier.fillMaxSize(),
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            //.memoryCachePolicy(CachePolicy.ENABLED)
+            .build(),
+        contentDescription = name
+    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -118,7 +160,7 @@ fun SearchView(viewModel: MoviesViewModel) {
         leadingIcon = {
             IconButton(onClick = {
                 //TODO: Your logic here
-
+                viewModel.getMovies(searchQueryState.value.text);
                 //based on @ExperimentalComposeUiApi - if this doesn't work in a newer version remove it
                 //no alternative in compose for hiding keyboard at time of writing
                 keyboardController?.hide()

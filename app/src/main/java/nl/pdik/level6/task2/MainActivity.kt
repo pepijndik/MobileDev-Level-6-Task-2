@@ -54,7 +54,7 @@ private fun NavHost(
         startDestination = MovieScreens.OverviewScreen.route,
         Modifier.padding(innerPadding)
     ) {
-        composable(MovieScreens.OverviewScreen.route) { OverviewScreen(viewModel) }
+        composable(MovieScreens.OverviewScreen.route) { OverviewScreen(viewModel,navController) }
         composable(MovieScreens.DetialScreen.route) { }
     }
 }

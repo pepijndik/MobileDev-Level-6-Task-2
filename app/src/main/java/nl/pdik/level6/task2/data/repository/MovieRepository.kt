@@ -13,11 +13,11 @@ class MovieRepository {
      * suspend function that calls a suspend function from the apiService call
      * @return result wrapped in our own Resource sealed class
      */
-    suspend fun getMovies(): Resource<List<Movie>> {
+    suspend fun getMovies(query: String): Resource<List<Movie>?> {
 
         val response = try {
             withTimeout(5_000) {
-                apiService.getMovies()
+                apiService.getMovies(query=query).body()?.results
             }
         } catch (e: Exception) {
             Log.e("MovieRepository", e.message ?: "No exception message available")
