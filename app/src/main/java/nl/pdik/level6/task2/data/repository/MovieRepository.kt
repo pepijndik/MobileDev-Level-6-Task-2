@@ -23,7 +23,7 @@ class MovieRepository {
             Log.e("MovieRepository", e.message ?: "No exception message available")
             return Resource.Error("An unknown error occured")
         }
-
+        println(response);
         return Resource.Success(response)
     }
 

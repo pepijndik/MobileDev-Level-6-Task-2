@@ -139,30 +139,30 @@ fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (M
 
 @Composable
 fun MoviePoster(url:String, name:String, modifier: Modifier) {
-    val painter = rememberAsyncImagePainter(
-        ImageRequest.Builder(LocalContext.current).data(data = url)
-            .apply<ImageRequest.Builder>(block = fun ImageRequest.Builder.() {
-                crossfade(true)
-                memoryCachePolicy(CachePolicy.ENABLED)
-            }).build()
-    )
-    Image(
-        contentScale = FillBounds,
-        painter = painter,
-        modifier = modifier,
-        contentDescription = null
-    )
-
-//    AsyncImage(
-//        contentScale = FillBounds,
-//        modifier = modifier,
-//        model = ImageRequest.Builder(LocalContext.current)
-//            .data(url)
-//            .crossfade(true)
-//            .memoryCachePolicy(CachePolicy.ENABLED)
-//            .build(),
-//        contentDescription = name
+//    val painter = rememberAsyncImagePainter(
+//        ImageRequest.Builder(LocalContext.current).data(data = url)
+//            .apply<ImageRequest.Builder>(block = fun ImageRequest.Builder.() {
+//                crossfade(true)
+//                memoryCachePolicy(CachePolicy.ENABLED)
+//            }).build()
 //    )
+//    Image(
+//        contentScale = FillBounds,
+//        painter = painter,
+//        modifier = modifier,
+//        contentDescription = null
+//    )
+
+    AsyncImage(
+        contentScale = FillBounds,
+        modifier = modifier,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build(),
+        contentDescription = name
+    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
