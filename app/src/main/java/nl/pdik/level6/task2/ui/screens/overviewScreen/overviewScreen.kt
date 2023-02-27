@@ -120,7 +120,7 @@ fun MovieContent(movie: Movie, modifier: Modifier = Modifier, onMovieClicked: (I
             elevation = 8.dp,
             onClick = { onMovieClicked(movie.id) }
         ) {
-            val path = "https://image.tmdb.org/t/p/original/"+movie.backdrop;
+            val path = "https://image.tmdb.org/t/p/w780/"+movie.poster;
             MoviePoster(path, movie.title)
         }
     }
